@@ -341,6 +341,7 @@ int zmq_poll (zmq_pollitem_t *items_, int nitems_, long timeout_)
     zmq_assert (pollfds);
     int npollfds = 0;
     int nsockets = 0;
+    timeval tv1, tv2;
 
     zmq::app_thread_t *app_thread = NULL;
 
@@ -448,6 +449,7 @@ int zmq_poll (zmq_pollitem_t *items_, int nitems_, long timeout_)
             break;
 
         //  Wait for events. Ignore interrupts if there's infinite timeout.
+        gettimeofday(&tv1, NULL);
         while (true) {
             rc = poll (pollfds, npollfds, timeout);
             if (rc == -1 && errno == EINTR) {
@@ -470,7 +472,13 @@ int zmq_poll (zmq_pollitem_t *items_, int nitems_, long timeout_)
         //  Setting timeout to zero will cause termination of the function
         //  once the events we've got are processed.
         if (timeout > 0)
-            timeout = 0;
+        {
+            gettimeofday(&tv2, NULL);
+            long elapsed = (tv2.tv_sec*1000000L + tv2.tv_usec - tv1.tv_sec*1000000L - tv1.tv_usec) / 1000L;
+            timeout -= elapsed;
+            if (timeout < 0)
+                timeout = 0;
+        }
     }
 
     free (pollfds);
