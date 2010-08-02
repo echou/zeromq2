@@ -75,8 +75,8 @@ on_mingw32="no"
 AC_CANONICAL_HOST
 
 # Determine whether or not documentation should be built and installed.
-build_doc="yes"
-install_man="yes"
+build_doc="no"
+install_man="no"
 # Check for asciidoc and xmlto and don't build the docs if these are not installed.
 AC_CHECK_PROG(have_asciidoc, asciidoc, yes, no)
 AC_CHECK_PROG(have_xmlto, xmlto, yes, no)
@@ -356,7 +356,7 @@ AM_CONDITIONAL(BUILD_PGM, test "x$pgm_ext" = "xyes")
 AM_CONDITIONAL(BUILD_NO_PGM, test "x$pgm_ext" = "xno")
 AM_CONDITIONAL(ON_MINGW, test "x$on_mingw32" = "xyes")
 AM_CONDITIONAL(INSTALL_MAN, test "x$install_man" = "xyes")
-AM_CONDITIONAL(BUILD_DOC, test "x$build_doc" = "xyes")
+AM_CONDITIONAL(BUILD_DOC, test "x$build_doc" = "xno")
 
 AC_SUBST(stdint)
 AC_SUBST(inttypes)
@@ -370,11 +370,9 @@ AC_SUBST(LIBZMQ_EXTRA_LDFLAGS)
 AC_TYPE_SIGNAL
 AC_CHECK_FUNCS(perror gettimeofday memset socket getifaddrs freeifaddrs)
 
-AC_OUTPUT(Makefile src/Makefile doc/Makefile
-    perf/Makefile src/libzmq.pc \
+AC_OUTPUT(Makefile src/Makefile src/libzmq.pc \
     devices/Makefile devices/zmq_forwarder/Makefile \
-    devices/zmq_streamer/Makefile devices/zmq_queue/Makefile \
-    builds/msvc/Makefile)
+    devices/zmq_streamer/Makefile devices/zmq_queue/Makefile) 
 
 #  On Linux patch libtool to delete hardcoded paths (rpath).
 case "${host_os}" in
